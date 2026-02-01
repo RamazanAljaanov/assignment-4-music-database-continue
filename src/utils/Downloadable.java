@@ -1,4 +1,14 @@
 package utils;
+
 public interface Downloadable {
-    void download(); // Требование: хотя бы 1 метод
+    void download();
+
+    default String defaultQuality() {
+        return "320kbps";
+    }
+
+    static boolean isDownloadable(Object o) {
+        return o instanceof Downloadable;
+    }
 }
+

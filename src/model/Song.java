@@ -1,9 +1,12 @@
 package model;
+
+import model.Artist;
+import model.Media;
 import utils.*;
 
 public class Song extends Media implements Playable, Downloadable {
     private String genre;
-    private Artist artist; // КОМПОЗИЦИЯ (один объект внутри другого)
+    private Artist artist;
 
     public Song(int id, String title, int duration, String genre, Artist artist) {
         super(id, title, duration);

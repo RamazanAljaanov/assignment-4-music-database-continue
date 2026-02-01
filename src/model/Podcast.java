@@ -4,7 +4,7 @@ public class Podcast extends Media {
     private String host;
 
     public Podcast(int id, String title, int duration, String host) {
-        super(id, title, duration); // Вызов конструктора Media
+        super(id, title, duration);
         this.host = host;
     }
 

@@ -1,36 +1,87 @@
 package service;
+
 import dto.MediaDTO;
-import exception.*;
-import model.*;
-import repository.MediaRepository;
-import java.sql.SQLException;
+import exception.InvalidInputException;
+import model.Media;
+import model.Podcast;
+import model.Song;
+import repository.interfaces.MediaRepositoryInterface;
+import service.interfaces.MediaServiceInterface;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MediaService {
-    private final MediaRepository repo = new MediaRepository();
+public class MediaService implements MediaServiceInterface {
 
-    public void addMedia(Media m) throws Exception {
-        if (m.getTitle().trim().isEmpty()) throw new InvalidInputException("Title empty!");
-        repo.addMedia(m);
+    private final MediaRepositoryInterface repo;
+
+    public MediaService(MediaRepositoryInterface repo) {
+        this.repo = repo;
     }
 
-    public List<MediaDTO> getAllAsDTO() throws SQLException {
+    @Override
+    public int addMedia(Media m) {
+        if (m == null) throw new InvalidInputException("Media is null");
+        if (m.getTitle() == null || m.getTitle().trim().isEmpty())
+            throw new InvalidInputException("Title empty!");
+        if (m.getDuration() <= 0)
+            throw new InvalidInputException("Duration must be > 0");
+
+        return repo.addMedia(m);
+    }
+
+    @Override
+    public List<MediaDTO> getAllAsDTO() {
         List<MediaDTO> dtos = new ArrayList<>();
         for (Media m : repo.getAll()) {
-            MediaDTO d = new MediaDTO(); d.id = m.getId(); d.title = m.getTitle();
-            d.info = (m instanceof Song) ? ((Song)m).getArtist().getName() : "Podcast";
+            MediaDTO d = new MediaDTO();
+            d.id = m.getId();
+            d.title = m.getTitle();
+
+            if (m instanceof Song s) {
+                d.info = (s.getArtist() != null) ? s.getArtist().getName() : "Unknown artist";
+            } else if (m instanceof Podcast p) {
+                d.info = p.getHost();
+            } else {
+                d.info = m.getMediaType();
+            }
+
             dtos.add(d);
-        } return dtos;
+        }
+        return dtos;
     }
 
-    public List<Media> getAll() throws SQLException { return repo.getAll(); }
-    public void delete(int id) throws SQLException { repo.delete(id); }
-    public void update(int id, String title) throws SQLException { repo.update(id, title); }
-    public void createPlaylist(String name) throws SQLException { repo.createPlaylist(name); }
+    @Override
+    public List<Media> getAll() {
+        return repo.getAll();
+    }
 
-    public String getStats() throws SQLException {
+    @Override
+    public void delete(int id) {
+        if (id <= 0) throw new InvalidInputException("id must be > 0");
+        repo.delete(id);
+    }
+
+    @Override
+    public void updateTitle(int id, String title) {
+        if (id <= 0) throw new InvalidInputException("id must be > 0");
+        if (title == null || title.trim().isEmpty())
+            throw new InvalidInputException("title empty");
+        repo.updateTitle(id, title);
+    }
+
+    @Override
+    public void createPlaylist(String name) {
+        if (name == null || name.trim().isEmpty())
+            throw new InvalidInputException("playlist name empty");
+        repo.createPlaylist(name);
+    }
+
+    @Override
+    public String getStats() {
         List<Media> all = repo.getAll();
-        return "Total Items: " + all.size() + " | Total Time: " + all.stream().mapToInt(Media::getDuration).sum() + "s";
+        int total = all.stream().mapToInt(Media::getDuration).sum();
+        return "Total Items: " + all.size() + " | Total Time: " + total + "s";
     }
 }
+

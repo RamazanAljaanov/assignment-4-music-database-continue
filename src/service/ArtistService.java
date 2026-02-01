@@ -1,19 +1,27 @@
 package service;
 
 import model.Artist;
-import repository.ArtistRepository;
-import java.sql.SQLException;
+import repository.interfaces.ArtistRepositoryInterface;
+import service.interfaces.ArtistServiceInterface;
+
 import java.util.List;
 
-public class ArtistService {
-    private final ArtistRepository repo = new ArtistRepository();
+public class ArtistService implements ArtistServiceInterface {
 
-    public void addArtist(String name) throws SQLException {
-        // Ошибка могла быть тут: мы передаем просто name (это String)
+    private final ArtistRepositoryInterface repo;
+
+    public ArtistService(ArtistRepositoryInterface repo) {
+        this.repo = repo;
+    }
+
+    @Override
+    public void addArtist(String name) {
         repo.create(name);
     }
 
-    public List<Artist> getAll() throws SQLException {
+    @Override
+    public List<Artist> getAll() {
         return repo.getAll();
     }
 }
+

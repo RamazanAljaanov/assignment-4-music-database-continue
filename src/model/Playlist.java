@@ -6,11 +6,11 @@ import java.util.List;
 public class Playlist {
     private int id;
     private String name;
-    private List<Media> items; // Агрегация (требование задания)
+    private List<Media> items;
 
     public Playlist(int id, String name) {
         this.id = id;
-        this.name = name;
+        this.name = name;;
         this.items = new ArrayList<>();
     }
 

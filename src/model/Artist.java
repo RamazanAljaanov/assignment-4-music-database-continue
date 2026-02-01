@@ -9,7 +9,6 @@ public class Artist {
         this.name = name;
     }
 
-    // Геттеры и сеттеры (Инкапсуляция)
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getName() { return name; }
