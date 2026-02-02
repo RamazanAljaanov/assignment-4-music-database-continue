@@ -1,44 +1,99 @@
-Advanced Music Library API 
+# 🎵 Music Library Database API (Assignment 4 – SOLID & Advanced OOP)
 
-A. Project Overview
-Purpose:
+## 📌 Project Overview
+This project is a **Java-based Music Library Management API** developed as part of **Assignment 4**.  
+It is a continuation and refactoring of **Assignment 3**, enhanced with **SOLID principles**, **advanced OOP concepts**, and a **clean layered architecture**.
 
-This project is a Java-based REST-like API (Console Version) designed to manage a Music Library. 
-It allows users to manage artists, songs, podcasts, and playlists using a persistent PostgreSQL database.
+The system allows managing music-related entities such as songs, podcasts, artists, and categories using a relational database and JDBC.
 
-Summary of Entities:
-Artist: Represents the creator of music.
-Media (Abstract): The base class for all playable content.
-Song: A type of media linked to an Artist and a Genre.
-Podcast: A type of media linked to a Host.
-Playlist: A collection that aggregates multiple Media items.
+---
 
-OOP Design Documentation
-Abstraction: The Media class is abstract and defines the core structure (id, title, duration) and abstract methods like displayDetails().
-Inheritance: Song and Podcast extend Media, inheriting common attributes while adding specific ones (Genre, Host).
-Polymorphism: The system handles a List<Media>, where calling displayDetails() triggers the specific implementation of either a Song or a Podcast at runtime.
-Interfaces:
-Playable: Implemented by Song to simulate playback.
-Downloadable: Implemented by Song to simulate offline access.
-Composition/Aggregation:
-A Song contains an Artist object (Composition).
-A Playlist contains a List<Media> (Aggregation).
+## 🎯 Learning Objectives
+The main goals of this project are:
+- Apply **SOLID principles** in a real Java application
+- Strengthen **Object-Oriented Programming** design
+- Implement **layered architecture**
+- Use **advanced Java features** (generics, lambdas, reflection)
+- Work with **JDBC and PostgreSQL**
+- Practice clean Git workflow and documentation
 
-C. Database Description
-Schema & Constraints:
-artists: Stores unique artist names with a Primary Key.
-media: Base table for all media (Primary Key).
-songs: Linked to media (FK) and artists (FK) using ON DELETE CASCADE.
-playlists: Stores playlist names.
-playlist_media: Junction table for Many-to-Many relationship between Playlists and Media.
+---
 
-D. Controller Summary
-The MusicController serves as the entry point for the CLI, exposing:
-addArtist(String name): Validates and saves a new artist.
-addMedia(Media m): Adds a Song or Podcast to the DB.
-getLibrary(): Returns all media using Polymorphism.
-getDTOs(): Demonstrates the use of Data Transfer Objects for formatted output.
-getStats(): Provides library statistics (total tracks/time).
+## 🧱 Architecture Overview
+The project follows a **strict layered architecture**:
+
+
+### Layer Responsibilities
+- **Controller**
+  - Handles user input (CLI)
+  - Delegates operations to service layer
+  - Contains no business logic
+
+- **Service**
+  - Applies validation and business rules
+  - Uses repository interfaces (DIP)
+  - Throws custom exceptions
+
+- **Repository**
+  - Implements generic CRUD operations
+  - Uses JDBC and PreparedStatements
+  - Contains no business logic
+
+- **Database**
+  - PostgreSQL relational database
+  - Foreign keys and constraints
+
+---
+
+## 🧩 SOLID Principles Applied
+
+### 🔹 SRP (Single Responsibility Principle)
+- Each class has one clear responsibility  
+  (e.g. Controller handles input, Service handles logic, Repository handles DB access)
+
+### 🔹 OCP (Open–Closed Principle)
+- Abstract base classes allow adding new media types without modifying existing code
+
+### 🔹 LSP (Liskov Substitution Principle)
+- Subclasses (Song, Podcast) can be used via base class references safely
+
+### 🔹 ISP (Interface Segregation Principle)
+- Small, focused interfaces (`Playable`, `Downloadable`, `CrudRepository<T>`)
+
+### 🔹 DIP (Dependency Inversion Principle)
+- Service layer depends on repository **interfaces**, not implementations
+
+---
+
+## 🧠 OOP Design
+
+### Abstract Base Class
+- `Media` (abstract)
+  - Shared fields: `id`, `title`
+  - Abstract methods overridden by subclasses
+  - Demonstrates polymorphism
+
+### Subclasses
+- `Song`
+- `Podcast`
+
+### Composition / Aggregation
+- `Song → Artist`
+- `Media → Category`
+
+---
+
+## ⚙️ Advanced Java Features Used
+
+### ✔ Generics
+```java
+public interface CrudRepository<T> {
+    void create(T entity);
+    List<T> getAll();
+    void delete(int id);
+}
+```
+
 
 ![OUTPUT](docs/Screenshots/1.png)
 ![Database Pgadmin CRUD](docs/Screenshots/2.png)
